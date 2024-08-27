@@ -1,0 +1,135 @@
+/* src/App.css */
+
+/* Reseta alguns estilos padrão e define a tipografia básica */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f4f4f4; /* Cor de fundo da página */
+}
+
+/* Estilo básico para a barra de navegação */
+nav {
+  background-color: #282c34; /* Cor de fundo da barra de navegação */
+  color: white; /* Cor do texto */
+  padding: 1rem; /* Espaçamento interno */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para profundidade */
+}
+
+/* Estilo para a lista de itens da barra de navegação */
+.navbar-list {
+  list-style-type: none; /* Remove marcadores de lista */
+  margin: 0; /* Remove a margem padrão */
+  padding: 0; /* Remove o preenchimento padrão */
+  display: flex; /* Exibe itens horizontalmente */
+  justify-content: center; /* Alinha itens ao centro */
+  flex-wrap: wrap; /* Permite quebra de linha para itens se necessário */
+}
+
+/* Estilo para links dentro da barra de navegação */
+.navbar-link {
+  color: white; /* Cor do texto dos links */
+  text-decoration: none; /* Remove o sublinhado dos links */
+  margin: 0 1rem; /* Espaçamento horizontal entre os links */
+  padding: 0.5rem 0; /* Espaçamento interno vertical para links */
+  font-size: 1rem; /* Tamanho da fonte dos links */
+  transition: color 0.3s ease, border-bottom 0.3s ease; /* Transição suave para efeitos de hover */
+  border-bottom: 2px solid transparent; /* Adiciona uma borda inferior invisível para efeito de hover */
+}
+
+/* Estilo para links ao passar o mouse */
+.navbar-link:hover {
+  color: #61dafb; /* Cor do texto ao passar o mouse */
+  border-bottom: 2px solid #61dafb; /* Adiciona uma borda inferior visível ao passar o mouse */
+}
+
+/* Estilo para o botão de navegação quando ativo ou focado */
+.navbar-link:active, .navbar-link:focus {
+  color: #61dafb; /* Cor do texto quando ativo ou focado */
+}
+
+/* Estilo para o conteúdo principal da página */
+main {
+  padding: 2rem; /* Espaçamento interno para o conteúdo principal */
+  min-height: calc(100vh - 120px); /* Garante que o conteúdo principal tenha altura mínima, ajustando para a altura do footer e header */
+}
+
+/* Estilo básico para o rodapé */
+footer {
+  background-color: #282c34; /* Cor de fundo do rodapé */
+  color: white; /* Cor do texto */
+  text-align: center; /* Alinha o texto ao centro */
+  padding: 1rem; /* Espaçamento interno */
+  position: relative; /* Posiciona o rodapé em relação ao fluxo normal do documento */
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* Sombra para profundidade */
+}
+
+/* Estilo básico para botões, se utilizados */
+button {
+  background-color: #61dafb; /* Cor de fundo dos botões */
+  border: none; /* Remove bordas padrão */
+  color: white; /* Cor do texto dos botões */
+  padding: 0.5rem 1rem; /* Espaçamento interno dos botões */
+  font-size: 1rem; /* Tamanho da fonte dos botões */
+  border-radius: 4px; /* Cantos arredondados */
+  cursor: pointer; /* Cursor de ponteiro ao passar sobre o botão */
+  transition: background-color 0.3s ease; /* Transição suave para efeito de hover */
+}
+
+button:hover {
+  background-color: #21a1f1; /* Cor de fundo dos botões ao passar o mouse */
+}
+
+/* Estilos adicionais para inputs, se utilizados */
+input, textarea {
+  border: 1px solid #ccc; /* Borda padrão para campos de entrada */
+  padding: 0.5rem; /* Espaçamento interno */
+  border-radius: 4px; /* Cantos arredondados */
+  width: 100%; /* Ocupa toda a largura disponível */
+  box-sizing: border-box; /* Inclui o preenchimento e borda no cálculo da largura */
+}
+
+/* Estilo para cabeçalhos */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0; /* Remove a margem superior dos cabeçalhos */
+  margin-bottom: 0.5rem; /* Margem inferior dos cabeçalhos */
+}
+
+/* Estilo para parágrafos */
+p {
+  margin: 0 0 1rem 0; /* Margem inferior dos parágrafos */
+}
+
+/* Estilo para o formulário do fornecedor */
+.supplier-form {
+  display: flex;
+  flex-direction: column; /* Garante que os campos estejam um embaixo do outro */
+  max-width: 500px; /* Largura máxima do formulário */
+  margin: 2rem auto; /* Centraliza o formulário na página */
+  padding: 1.5rem; /* Espaçamento interno do formulário */
+  background-color: #ffffff; /* Cor de fundo do formulário */
+  border: 1px solid #ddd; /* Borda leve ao redor do formulário */
+  border-radius: 8px; /* Cantos arredondados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para o botão de envio do formulário */
+.supplier-form button {
+  background-color: #61dafb; /* Cor de fundo do botão */
+  border: none; /* Remove a borda padrão */
+  color: white; /* Cor do texto do botão */
+  padding: 0.75rem 1.5rem; /* Espaçamento interno do botão */
+  font-size: 1rem; /* Tamanho da fonte do botão */
+  border-radius: 4px; /* Cantos arredondados */
+  cursor: pointer; /* Cursor de ponteiro ao passar sobre o botão */
+  transition: background-color 0.3s ease; /* Transição suave para efeito de hover */
+  width: 100%; /* Ocupa toda a largura disponível */
+}
+
+/* Estilo para o botão de envio ao passar o mouse */
+.supplier-form button:hover {
+  background-color: #21a1f1; /* Cor de fundo do botão ao passar o mouse */
+}

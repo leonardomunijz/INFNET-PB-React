@@ -1,0 +1,22 @@
+/* src/style.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Configurações globais */
+html, body {
+  @apply h-full;
+}
+
+#root {
+  @apply flex flex-col min-h-screen;
+}
+
+main {
+  @apply flex-1;
+}
+
+footer {
+  @apply bg-gray-800 text-white text-center py-4 shadow-md;
+}
