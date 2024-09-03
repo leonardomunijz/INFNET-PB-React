@@ -40,4 +40,4 @@ O sistema possui dois tipos de conta:
 1. Clone o repositório:
 
 ```bash
-https://github.com/leonardomunijz/INFNET-PB-React.git
+git clone https://github.com/leonardomunijz/INFNET-PB-React.git
