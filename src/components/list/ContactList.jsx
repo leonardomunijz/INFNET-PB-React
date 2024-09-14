@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import DataTable from 'react-data-table-component';
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
-import { db } from '../../auth/firebaseConfig';
 
-const ContactList = () => {
-  const [contacts, setContacts] = useState([]);
-
-  useEffect(() => {
-    // Função para buscar os contatos do Firestore
-    const fetchContacts = async () => {
-      const unsubscribe = onSnapshot(collection(db, 'contatos'), (snapshot) => {
-        const contactsList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setContacts(contactsList);
-      });
-      return () => unsubscribe(); // Desinscrever-se do listener quando o componente for desmontado
-    };
-
-    fetchContacts();
-  }, []);
+const ContactList = ({ contacts, onDelete, onEdit, suppliers }) => {
+  // Cria um mapa de IDs para nomes de fornecedores
+  const supplierMap = suppliers.reduce((map, supplier) => {
+    map[supplier.id] = supplier.name;
+    return map;
+  }, {});
 
   const columns = [
     {
@@ -38,13 +24,38 @@ const ContactList = () => {
       selector: row => row.email,
       sortable: true,
     },
+    {
+      name: 'Fornecedor',
+      selector: row => supplierMap[row.supplier] || 'Fornecedor desconhecido',
+      sortable: true,
+    },
+    {
+      name: 'Ações',
+      cell: row => (
+        <div>
+          <button
+            onClick={() => onEdit(row)}
+            className="text-blue-500 mr-4 hover:underline"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => onDelete(row.id)}
+            className="text-red-500 hover:underline"
+          >
+            Excluir
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Lista de Contatos
-      </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Lista de Contatos</h2>
       <DataTable
         columns={columns}
         data={contacts}
@@ -54,8 +65,8 @@ const ContactList = () => {
         responsive
         striped
         noDataComponent="Nenhum contato cadastrado."
-        paginationPerPage={4} // Exibir 4 itens por página
-        paginationRowsPerPageOptions={[4, 8, 12]} // Opções de itens por página
+        paginationPerPage={4}
+        paginationRowsPerPageOptions={[4, 8, 12]}
       />
     </div>
   );

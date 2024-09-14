@@ -1,35 +1,55 @@
-// src/components/SupplierForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SupplierForm = ({ onSubmit }) => {
+const SupplierForm = ({ onSubmit, selectedSupplier, clearSelectedSupplier }) => {
   const [name, setName] = useState('');
+  const [cnpj, setCnpj] = useState('');
   const [address, setAddress] = useState('');
-  const [contact, setContact] = useState('');
+
+  useEffect(() => {
+    if (selectedSupplier) {
+      setName(selectedSupplier.name || '');
+      setCnpj(selectedSupplier.cnpj || '');
+      setAddress(selectedSupplier.address || '');
+    } else {
+      setName('');
+      setCnpj('');
+      setAddress('');
+    }
+  }, [selectedSupplier]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ name, address, contact });
-    setName('');
-    setAddress('');
-    setContact('');
+    const supplier = {
+      id: selectedSupplier ? selectedSupplier.id : null,
+      name,
+      cnpj,
+      address,
+    };
+    onSubmit(supplier);
   };
 
   return (
-    <form
-      className=""
-      onSubmit={handleSubmit}
-    >
+    <form onSubmit={handleSubmit} className="mb-4">
       <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-1">Nome do Fornecedor:</label>
+        <label className="block text-gray-700 font-medium mb-1">Nome:</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
-
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-1">CNPJ:</label>
+        <input
+          type="text"
+          value={cnpj}
+          onChange={(e) => setCnpj(e.target.value)}
+          required
+          className="border border-gray-300 rounded-lg p-2 w-full"
+        />
+      </div>
       <div className="mb-4">
         <label className="block text-gray-700 font-medium mb-1">Endereço:</label>
         <input
@@ -37,27 +57,24 @@ const SupplierForm = ({ onSubmit }) => {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           required
-          className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          className="border border-gray-300 rounded-lg p-2 w-full"
         />
       </div>
-
-      <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-1">Contato:</label>
-        <input
-          type="text"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-          required
-          className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
-      </div>
-
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+        className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition"
       >
-        Cadastrar Fornecedor
+        {selectedSupplier ? 'Atualizar Fornecedor' : 'Cadastrar Fornecedor'}
       </button>
+      {selectedSupplier && (
+        <button
+          type="button"
+          onClick={clearSelectedSupplier}
+          className="bg-gray-500 text-white rounded-lg px-4 py-2 ml-2 hover:bg-gray-600 transition"
+        >
+          Cancelar
+        </button>
+      )}
     </form>
   );
 };

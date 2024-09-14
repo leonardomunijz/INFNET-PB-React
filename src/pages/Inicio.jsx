@@ -75,12 +75,6 @@ const Inicio = () => {
                     Gerencie seus produtos com detalhes precisos e atualizações em tempo real.
                   </p>
                 </Link>
-                <Link to="/cotacoes" className="bg-white p-6 rounded-lg shadow-md hover:bg-gray-50 transition">
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">Cotações</h2>
-                  <p className="text-gray-600">
-                    Registre e acompanhe suas cotações de forma fácil e rápida.
-                  </p>
-                </Link>
                 <Link to="/painel-administrativo" className="bg-white p-6 rounded-lg shadow-md hover:bg-gray-50 transition">
                   <h2 className="text-2xl font-semibold text-gray-800 mb-4">Painel Administrativo</h2>
                   <p className="text-gray-600">

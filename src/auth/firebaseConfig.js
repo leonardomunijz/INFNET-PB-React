@@ -5,12 +5,12 @@ import { getFirestore } from "firebase/firestore"; // Importe getFirestore para 
 
 // Configuração do Firebase do seu app
 const firebaseConfig = {
-  apiKey: "AIzaSyDSUP7X_2XKV5o25irVYtRjUmHSXeM0FrA",
-  authDomain: "pb-tp3.firebaseapp.com",
-  projectId: "pb-tp3",
-  storageBucket: "pb-tp3.appspot.com",
-  messagingSenderId: "880774907082",
-  appId: "1:880774907082:web:4fd95804da9fb22c4b2033",
+  apiKey: "AIzaSyCEQGylZeV00PyhGY-ajV_iM18xHif0dyw",
+  authDomain: "infnet-pb-react.firebaseapp.com",
+  projectId: "infnet-pb-react",
+  storageBucket: "infnet-pb-react.appspot.com",
+  messagingSenderId: "206685692731",
+  appId: "1:206685692731:web:c411a62f4f2e20e91c4d1e"
 };
 
 // Inicializa o Firebase

@@ -1,26 +1,25 @@
-// src/components/ProductForm.jsx
-import React, { useState } from 'react';
-import { db } from '../../auth/firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
 
-const ProductForm = ({ onProductAdded }) => {
+const ProductForm = ({ onProductAdded, product, onCancel }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const newProduct = { name, description, price };
-      const docRef = await addDoc(collection(db, 'produtos'), newProduct);
-      onProductAdded({ id: docRef.id, ...newProduct });
-      // Clear the form fields after submission
-      setName('');
-      setDescription('');
-      setPrice('');
-    } catch (e) {
-      console.error('Erro ao adicionar produto:', e);
+  useEffect(() => {
+    if (product) {
+      setName(product.name || '');
+      setDescription(product.description || '');
+      setPrice(product.price || '');
     }
+  }, [product]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newProduct = { name, description, price };
+    onProductAdded(newProduct);
+    setName('');
+    setDescription('');
+    setPrice('');
   };
 
   return (
@@ -61,8 +60,17 @@ const ProductForm = ({ onProductAdded }) => {
         type="submit"
         className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
       >
-        Cadastrar Produto
+        {product ? 'Atualizar Produto' : 'Cadastrar Produto'}
       </button>
+      {product && (
+        <button
+          type="button"
+          onClick={onCancel}
+          className="w-full mt-2 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition"
+        >
+          Cancelar
+        </button>
+      )}
     </form>
   );
 };

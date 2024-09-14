@@ -1,28 +1,8 @@
-// src/components/ProductList.jsx
-import React, { useState, useEffect } from 'react';
+// src/components/list/ProductList.jsx
+import React from 'react';
 import DataTable from 'react-data-table-component';
-import { db } from '../../auth/firebaseConfig';
-import { collection, onSnapshot } from 'firebase/firestore';
 
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    // Obter a referência para a coleção 'produtos'
-    const productsCollection = collection(db, 'produtos');
-
-    // Configurar o listener para atualizações em tempo real
-    const unsubscribe = onSnapshot(productsCollection, (querySnapshot) => {
-      const productsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProducts(productsList);
-    }, (error) => {
-      console.error('Erro ao ouvir atualizações:', error);
-    });
-
-    // Limpar o listener quando o componente for desmontado
-    return () => unsubscribe();
-  }, []);
-
+const ProductList = ({ products, onDelete, onEdit, onRequestDelete }) => {
   const columns = [
     {
       name: 'Nome',
@@ -39,6 +19,28 @@ const ProductList = () => {
       selector: row => row.price,
       sortable: true,
     },
+    {
+      name: 'Ações',
+      cell: row => (
+        <div>
+          <button
+            onClick={() => onEdit(row)}
+            className="text-blue-500 mr-4 hover:underline"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => onRequestDelete(row.id)}
+            className="text-red-500 hover:underline"
+          >
+            Excluir
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
   ];
 
   return (
@@ -53,8 +55,8 @@ const ProductList = () => {
         responsive
         striped
         noDataComponent="Nenhum produto cadastrado."
-        paginationPerPage={4} // Exibir 4 itens por página
-        paginationRowsPerPageOptions={[4, 8, 12]} // Opções de itens por página
+        paginationPerPage={4}
+        paginationRowsPerPageOptions={[4, 8, 12]}
       />
     </div>
   );

@@ -56,7 +56,6 @@ const Navbar = () => {
                 <Link to="/fornecedores" className="text-lg font-semibold hover:text-blue-400">Fornecedores</Link>
                 <Link to="/contatos" className="text-lg font-semibold hover:text-blue-400">Contatos</Link>
                 <Link to="/produtos" className="text-lg font-semibold hover:text-blue-400">Produtos</Link>
-                <Link to="/cotacoes" className="text-lg font-semibold hover:text-blue-400">Cotações</Link>
               </>
             )}
             {isAuthenticated && (

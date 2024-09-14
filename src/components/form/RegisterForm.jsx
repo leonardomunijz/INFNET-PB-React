@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../auth/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const RegisterForm = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +10,30 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('collaborator'); // Estado para o tipo de conta
   const [error, setError] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar se o usuário atual é admin
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const user = auth.currentUser; // Obtém o usuário atual autenticado
+        if (user) {
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            if (userData.role === 'admin') {
+              setIsAdmin(true);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Erro ao verificar status de administrador:', err);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -27,7 +50,7 @@ const RegisterForm = () => {
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
         createdAt: new Date(),
-        role: role, // Salva o tipo de conta
+        role: isAdmin ? role : 'collaborator', // Salva o tipo de conta se o usuário for admin
         isBlocked: false, // Define o status de bloqueio como false por padrão
       });
 
@@ -79,20 +102,22 @@ const RegisterForm = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Conta</label>
-          <select
-            id="role"
-            name="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-          >
-            <option value="collaborator">Colaborador</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </div>
+        {isAdmin && (
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Conta</label>
+            <select
+              id="role"
+              name="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            >
+              <option value="collaborator">Colaborador</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        )}
       </div>
       <button
         type="submit"

@@ -1,12 +1,16 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
 
-const SupplierList = ({ suppliers }) => {
-  // Definindo as colunas para o DataTable
+const SupplierList = ({ suppliers, onEdit, onDelete }) => {
   const columns = [
     {
       name: 'Nome',
       selector: row => row.name,
+      sortable: true,
+    },
+    {
+      name: 'CNPJ',
+      selector: row => row.cnpj,
       sortable: true,
     },
     {
@@ -15,17 +19,32 @@ const SupplierList = ({ suppliers }) => {
       sortable: true,
     },
     {
-      name: 'Contato',
-      selector: row => row.contact,
-      sortable: true,
+      name: 'Ações',
+      cell: row => (
+        <div>
+          <button
+            onClick={() => onEdit(row)}
+            className="text-blue-500 mr-4 hover:underline"
+          >
+            Editar
+          </button>
+          <button
+            onClick={() => onDelete(row.id)}
+            className="text-red-500 hover:underline"
+          >
+            Excluir
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
     },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Lista de Fornecedores
-      </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Lista de Fornecedores</h2>
       <DataTable
         columns={columns}
         data={suppliers}
@@ -35,8 +54,8 @@ const SupplierList = ({ suppliers }) => {
         responsive
         striped
         noDataComponent="Nenhum fornecedor cadastrado."
-        paginationPerPage={4} // Configura o número de itens por página para 4
-        paginationRowsPerPageOptions={[4, 8, 12]} // Opções de itens por página
+        paginationPerPage={4}
+        paginationRowsPerPageOptions={[4, 8, 12]}
       />
     </div>
   );
