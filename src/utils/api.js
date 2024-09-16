@@ -2,7 +2,7 @@
 
 import { auth, db } from '../auth/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
 // Função para criar um novo usuário e armazenar informações no Firestore
 export const registerUser = async (email, password) => {
@@ -106,6 +106,17 @@ export const createPurchaseRequest = async (productId, supplierId, price) => {
     console.log('Requisição de compra criada com sucesso!');
   } catch (error) {
     console.error("Erro ao criar requisição de compra:", error.message);
+    throw new Error(error.message);
+  }
+};
+
+// Função para deletar uma requisição de compra
+export const deletePurchaseRequest = async (id) => {
+  try {
+    await deleteDoc(doc(db, 'purchaseRequests', id));
+    console.log('Requisição de compra deletada com sucesso!');
+  } catch (error) {
+    console.error("Erro ao deletar requisição de compra:", error.message);
     throw new Error(error.message);
   }
 };

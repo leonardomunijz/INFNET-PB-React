@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchPurchaseRequests } from '../../../utils/api'; // Supondo que você tenha uma função para buscar requisições de compras
+import { fetchPurchaseRequests } from '../../../utils/api'; // Tenho uma função para buscar requisições de compras
 
 const PurchaseRequests = () => {
   const [requests, setRequests] = useState([]);

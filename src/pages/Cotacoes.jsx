@@ -7,10 +7,10 @@ const Cotacoes = () => {
   const [quotations, setQuotations] = useState([]);
 
   const handleQuotationSubmit = (quotation) => {
-    // Handle quotation submission logic here
+    
     setQuotations((prev) => [
       ...prev,
-      { id: Date.now(), ...quotation } // Adding a unique ID for each quotation
+      { id: Date.now(), ...quotation }
     ]);
     console.log('Cotação cadastrada:', quotation);
   };

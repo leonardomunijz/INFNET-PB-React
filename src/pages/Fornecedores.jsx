@@ -38,7 +38,7 @@ const Fornecedores = () => {
     try {
       if (supplier.id) {
         // Atualizando fornecedor existente
-        const supplierRef = doc(db, 'fornecedores', supplier.id);  // Referencia correta do documento
+        const supplierRef = doc(db, 'fornecedores', supplier.id);
         await updateDoc(supplierRef, {
           name: supplier.name,
           cnpj: supplier.cnpj,

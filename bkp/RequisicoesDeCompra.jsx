@@ -8,7 +8,6 @@ import {
 } from '../utils/api';
 import QuotationDetailsModal from '../components/QuotationDetailsModal';
 import ConfirmationDialog from '../components/ConfirmationDialog';
-import CreateQuotationModal from '../components/CreateQuotationModal';
 
 const RequisicoesDeCompra = () => {
   const [requests, setRequests] = useState([]);
@@ -23,7 +22,6 @@ const RequisicoesDeCompra = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [requestToDelete, setRequestToDelete] = useState(null);
-  const [isCreateQuotationModalOpen, setIsCreateQuotationModalOpen] = useState(false);
 
   useEffect(() => {
     const loadRequests = async () => {
@@ -102,16 +100,6 @@ const RequisicoesDeCompra = () => {
   const handleCloseConfirmationDialog = () => {
     setIsDialogOpen(false);
     setRequestToDelete(null);
-  };
-
-  const handleOpenCreateQuotationModal = (request) => {
-    setSelectedRequest(request);
-    setIsCreateQuotationModalOpen(true);
-  };
-
-  const handleCloseCreateQuotationModal = () => {
-    setIsCreateQuotationModalOpen(false);
-    setSelectedRequest(null);
   };
 
   return (
@@ -205,7 +193,7 @@ const RequisicoesDeCompra = () => {
                   </button>
                   <button
                     className="px-4 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition"
-                    onClick={() => handleOpenCreateQuotationModal(request)}
+                    onClick={() => handleViewDetails(request)}
                   >
                     Criar Cotação
                   </button>
@@ -219,33 +207,26 @@ const RequisicoesDeCompra = () => {
               </li>
             ))
           ) : (
-            <li className="py-4 text-center text-gray-500">Nenhuma requisição encontrada.</li>
+            <li className="py-4 text-center text-gray-600">Nenhuma requisição de compra encontrada.</li>
           )}
         </ul>
       </div>
 
+      {/* Modal de Ver Detalhes */}
       {selectedRequest && (
         <QuotationDetailsModal
-          isOpen={!!selectedRequest}
           request={selectedRequest}
           onClose={handleCloseDetails}
         />
       )}
 
+      {/* Diálogo de Confirmação */}
       {isDialogOpen && (
         <ConfirmationDialog
           isOpen={isDialogOpen}
+          message="Você tem certeza de que deseja excluir esta requisição de compra?"
           onConfirm={handleDeleteRequest}
           onCancel={handleCloseConfirmationDialog}
-          message="Tem certeza de que deseja deletar esta requisição de compra?"
-        />
-      )}
-
-      {isCreateQuotationModalOpen && (
-        <CreateQuotationModal
-          isOpen={isCreateQuotationModalOpen}
-          request={selectedRequest}
-          onClose={handleCloseCreateQuotationModal}
         />
       )}
     </div>

@@ -8,23 +8,35 @@ const QuotationList = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'cotacoes'), (snapshot) => {
-      const quotationsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setQuotations(quotationsList);
-    });
+    // Função para buscar e atualizar as cotações
+    const fetchQuotations = () => {
+      const unsubscribe = onSnapshot(collection(db, 'cotacoes'), (snapshot) => {
+        const quotationsList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setQuotations(quotationsList);
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    };
+
+    fetchQuotations();
   }, []);
 
-  const filteredQuotations = quotations.filter((quotation) => {
-    const searchTermLower = searchTerm.toLowerCase();
-    return (
-      quotation.productId.toLowerCase().includes(searchTermLower) ||
-      (quotation.productName && quotation.productName.toLowerCase().includes(searchTermLower)) ||
-      (quotation.supplier && quotation.supplier.toLowerCase().includes(searchTermLower))
-    );
-  });
+  // Função para filtrar as cotações com base no termo de busca
+  const filterQuotations = () => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return quotations.filter((quotation) => {
+      return (
+        quotation.productId.toLowerCase().includes(lowerCaseSearchTerm) ||
+        (quotation.productName && quotation.productName.toLowerCase().includes(lowerCaseSearchTerm)) ||
+        (quotation.supplier && quotation.supplier.toLowerCase().includes(lowerCaseSearchTerm))
+      );
+    });
+  };
 
+  // Definindo as colunas da tabela
   const columns = [
     {
       name: 'ID do Produto',
@@ -71,14 +83,14 @@ const QuotationList = () => {
       {/* Lista de cotações filtradas */}
       <DataTable
         columns={columns}
-        data={filteredQuotations}
+        data={filterQuotations()}
         pagination
         highlightOnHover
         pointerOnHover
         responsive
         striped
         noDataComponent="Nenhuma cotação encontrada."
-        paginationPerPage={5} // Exibir 4 itens por página
+        paginationPerPage={5} // Exibir 5 itens por página
         paginationRowsPerPageOptions={[5, 10, 15]} // Opções de itens por página
       />
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import RegisterForm from '../components/form/RegisterForm'; // Certifique-se de que o caminho está correto
+import RegisterForm from '../components/form/RegisterForm';
 
 const Cadastrar = () => (
   <div className="flex items-center justify-center min-h-screen bg-gray-100">
