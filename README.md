@@ -1,4 +1,5 @@
-# Sistema de Cotações - Bloco de Fornecedores e Produtos
+# Projeto de Bloco: Desenvolvimento Front-End com Frameworks
+## Sistema de Cotações de Compra
 
 Este projeto é um sistema de cotações desenvolvido com **React**, utilizando **Firebase Firestore** para armazenamento de dados. Ele permite que os usuários registrem fornecedores, produtos, e criem cotações associadas a diferentes fornecedores. O sistema também possui funcionalidades de login e controle de permissões de usuários (admin e colaboradores).
 
