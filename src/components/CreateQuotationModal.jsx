@@ -8,6 +8,7 @@ const CreateQuotationModal = ({ isOpen, onClose }) => {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierId, setSelectedSupplierId] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -33,12 +34,24 @@ const CreateQuotationModal = ({ isOpen, onClose }) => {
       setQuotationObservations('');
       setSelectedSupplierId('');
       setError('');
+      setSuccessMessage('');
     };
   }, [isOpen]);
 
   const handleSubmit = () => {
-    // Fecha o modal sem criar cotação
-    onClose();
+    // Validação dos campos obrigatórios
+    if (!selectedSupplierId || !quotationValue || !quotationObservations) {
+      setError('Todos os campos são obrigatórios.');
+      return;
+    }
+
+    // Aqui você deve adicionar a lógica para criar a cotação no Firestore
+
+    // Após criar a cotação com sucesso:
+    setSuccessMessage('Cotação criada com sucesso!');
+    setError(''); // Limpa a mensagem de erro, se houver
+    
+    // Não fechar o modal
   };
 
   if (!isOpen) return null;
@@ -52,6 +65,13 @@ const CreateQuotationModal = ({ isOpen, onClose }) => {
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
             <strong className="font-bold">Erro:</strong>
             <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4" role="alert">
+            <strong className="font-bold">Sucesso:</strong>
+            <span className="block sm:inline">{successMessage}</span>
           </div>
         )}
 
