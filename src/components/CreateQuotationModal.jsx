@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../auth/firebaseConfig';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 
-const CreateQuotationModal = ({ isOpen, onClose, requestId }) => {
+const CreateQuotationModal = ({ isOpen, onClose }) => {
   const [quotationValue, setQuotationValue] = useState('');
   const [quotationObservations, setQuotationObservations] = useState('');
   const [suppliers, setSuppliers] = useState([]);
@@ -20,6 +20,7 @@ const CreateQuotationModal = ({ isOpen, onClose, requestId }) => {
           }));
           setSuppliers(suppliersList);
         } catch (error) {
+          console.error('Erro ao buscar fornecedores:', error);
           setError('Falha ao buscar fornecedores.');
         }
       };
@@ -27,7 +28,6 @@ const CreateQuotationModal = ({ isOpen, onClose, requestId }) => {
       loadSuppliers();
     }
 
-    // Limpa o estado quando o modal é fechado
     return () => {
       setQuotationValue('');
       setQuotationObservations('');
@@ -36,24 +36,9 @@ const CreateQuotationModal = ({ isOpen, onClose, requestId }) => {
     };
   }, [isOpen]);
 
-  const handleSubmit = async () => {
-    if (!quotationValue || !quotationObservations || !selectedSupplierId) {
-      setError('Todos os campos são obrigatórios.');
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, 'quotations'), {
-        requestId,
-        supplierId: selectedSupplierId,
-        price: quotationValue,
-        observations: quotationObservations,
-        createdAt: new Date(),
-      });
-      onClose(); // Fecha o modal após criar a cotação
-    } catch (error) {
-      setError('Falha ao criar cotação.');
-    }
+  const handleSubmit = () => {
+    // Fecha o modal sem criar cotação
+    onClose();
   };
 
   if (!isOpen) return null;

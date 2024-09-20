@@ -1,192 +1,132 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '../auth/firebaseConfig'; // Ajuste o caminho conforme necessário
-import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
-import ExportCSV from './ExportCSV'; // Importa o componente de exportação CSV
+import { getAuth } from 'firebase/auth'; // Importando a autenticação do Firebase
 
-const QuotationDetailsModal = ({ request, onClose }) => {
-  const [quotations, setQuotations] = useState([]);
-  const [requestStatus, setRequestStatus] = useState('Cotada');
-  const [isLoading, setIsLoading] = useState(false); // Estado para controle de loading
+const QuotationDetailsModal = ({ isOpen, onClose, requestId }) => {
+  const [quotationDetails, setQuotationDetails] = useState(null);
+  const [error, setError] = useState('');
+  const [status, setStatus] = useState('Aberta'); // Status inicial
+  const [userEmail, setUserEmail] = useState(''); // Estado para o e-mail do usuário
+  const [fictitiousQuotes, setFictitiousQuotes] = useState([]); // Estado para cotações fictícias
 
   useEffect(() => {
-    if (request && request.id) {
-      fetchQuotationsAndStatus();
-    }
-  }, [request]); // Dependência no `request`
+    const loadQuotationDetails = async () => {
+      if (requestId) {
+        try {
+          const auth = getAuth(); // Obtendo a instância de autenticação
+          const user = auth.currentUser; // Obtendo o usuário atual
 
-  const fetchQuotationsAndStatus = async () => {
-    setIsLoading(true); // Inicia o loading
-    try {
-      // Buscar o status da requisição
-      const requestDoc = doc(db, 'purchaseRequests', request.id);
-      const requestSnapshot = await getDocs(requestDoc);
-      const requestData = requestSnapshot.data();
-      setRequestStatus(requestData?.status || 'Aberta');
-  
-      // Buscar as cotações relacionadas à requisição
-      const quotationsQuery = query(
-        collection(db, 'quotations'),
-        where('requestId', '==', request.id)
-      );
-      const querySnapshot = await getDocs(quotationsQuery);
-      const fetchedQuotations = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-  
-      setQuotations(fetchedQuotations);
-    } catch (error) {
-      console.error('Erro ao buscar cotações e status:', error);
-    } finally {
-      setIsLoading(false); // Finaliza o loading
-    }
-  };
+          // Se o usuário estiver logado, pegar o e-mail
+          if (user) {
+            setUserEmail(user.email);
+          }
 
-  const handleRequestStatusChange = async (newStatus) => {
-    if (request && request.id) {
-      setIsLoading(true); // Inicia o loading
-      try {
-        // Atualiza o status da requisição no Firestore
-        await updateDoc(doc(db, 'purchaseRequests', request.id), { status: newStatus });
-        // Atualiza o estado local para refletir a mudança
-        setRequestStatus(newStatus);
-      } catch (error) {
-        console.error('Erro ao atualizar o status da requisição:', error);
-      } finally {
-        setIsLoading(false); // Finaliza o loading
+          // Dados fictícios da cotação
+          const fictitiousData = {
+            requestId: requestId,
+            supplierName: "Fornecedor Exemplo",
+            productName: "Produto Exemplo",
+            price: "R$ 150,00",
+            observations: "Observações sobre a requisição",
+            status: "Aberta",
+            email: userEmail // Adicionando o e-mail ao objeto
+          };
+          setQuotationDetails(fictitiousData);
+        } catch (error) {
+          setError('Erro ao buscar detalhes da cotação: ' + error.message);
+        }
       }
-    }
-  };
+    };
 
-  if (!request) return null;
+    loadQuotationDetails();
+  }, [requestId, userEmail]); // Adicionando userEmail como dependência
 
-  const statusColor = {
-    Aberta: 'text-green-600',
-    'Em Cotação': 'text-yellow-600',
-    Cotada: 'text-blue-600'
-  }[requestStatus] || 'text-gray-600';
-
-  const csvData = [
-    {
-      Produto: request.productName || 'N/A',
-      Fornecedor: request.supplierName || 'N/A',
-      Preço: request.price || 'N/A',
-      'Data de Solicitação': request.requestDate || 'N/A',
-      Observações: request.observations || 'Nenhuma',
-      Status: requestStatus || 'N/A'
-    }
-  ];
-
-  // Cotações fictícias
-  const fictitiousQuotations = {
-    Aberta: [
-      {
-        id: '1',
-        supplierName: 'Fornecedor A',
-        price: 100.00,
-        observations: 'Observação sobre a cotação A'
+  // Atualiza as cotações fictícias com base no status
+  useEffect(() => {
+    const generateFictitiousQuotes = () => {
+      switch (status) {
+        case 'Aberta':
+          setFictitiousQuotes([]); // Não mostra cotações
+          break;
+        case 'Em Cotação':
+          setFictitiousQuotes([
+            { id: 1, supplier: "Fornecedor Alpha", price: "R$ 110,00", observations: "Cotação em processo. Validade até 10 dias." },
+            { id: 2, supplier: "Fornecedor Gama", price: "R$ 115,00", observations: "Cotação em processo. Necessário confirmar disponibilidade." }
+          ]);
+          break;
+        case 'Cotada':
+          setFictitiousQuotes([
+            { id: 1, supplier: "Fornecedor Alpha", price: "R$ 110,00", observations: "Cotação aceita. Entrega programada para 5 dias." },
+            { id: 2, supplier: "Fornecedor Gama", price: "R$ 115,00", observations: "Cotação aceita. Inclui garantia de 1 ano." },
+            { id: 3, supplier: "Fornecedor Zeta", price: "R$ 150,00", observations: "Cotação aceita. Condições especiais para pagamento." }
+          ]);
+          break;
+        default:
+          setFictitiousQuotes([]);
       }
-    ],
-    'Em Cotação': [
-      {
-        id: '1',
-        supplierName: 'Fornecedor A',
-        price: 100.00,
-        observations: 'Observação sobre a cotação A'
-      },
-      {
-        id: '2',
-        supplierName: 'Fornecedor B',
-        price: 120.00,
-        observations: 'Observação sobre a cotação B'
-      }
-    ],
-    Cotada: [
-      {
-        id: '1',
-        supplierName: 'Fornecedor A',
-        price: 100.00,
-        observations: 'Observação sobre a cotação A'
-      },
-      {
-        id: '2',
-        supplierName: 'Fornecedor B',
-        price: 120.00,
-        observations: 'Observação sobre a cotação B'
-      },
-      {
-        id: '3',
-        supplierName: 'Fornecedor C',
-        price: 110.00,
-        observations: 'Observação sobre a cotação C'
-      }
-    ]
-  };
+    };
 
-  // Substitui cotações reais por fictícias baseadas no status
-  const displayedQuotations = fictitiousQuotations[requestStatus] || [];
+    generateFictitiousQuotes();
+  }, [status]); // Atualiza cotações quando o status mudar
 
-  // Dados fictícios para a requisição
-  const fakeRequest = {
-    productName: 'Produto Exemplo',
-    supplierName: 'Fornecedor Exemplo',
-    price: 150.00,
-    requestDate: '2024-09-15',
-    observations: 'Observações fictícias para demonstração.'
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-2xl font-semibold mb-4">Detalhes da Requisição</h2>
-        <p><strong>Produto:</strong> {fakeRequest.productName || 'N/A'}</p>
-        <p><strong>Fornecedor:</strong> {fakeRequest.supplierName || 'N/A'}</p>
-        <p><strong>Preço:</strong> R$ {fakeRequest.price || 'N/A'}</p>
-        <p><strong>Data de Solicitação:</strong> {fakeRequest.requestDate || 'N/A'}</p>
-        <p><strong>Observações:</strong> {fakeRequest.observations || 'Nenhuma'}</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/3">
+        <h2 className="text-lg font-semibold mb-4">Detalhes da Requisição</h2>
 
-        {/* Dropdown para o status da requisição */}
-        <p>
-          <strong>Status da Requisição:</strong>
-          <select
-            value={requestStatus}
-            onChange={(e) => handleRequestStatusChange(e.target.value)}
-            className="ml-2 border border-gray-300 rounded-lg p-1"
-            disabled={isLoading} // Desabilita o select enquanto o loading está ativo
-          >
-            <option value="Aberta">Aberta</option>
-            <option value="Em Cotação">Em Cotação</option>
-            <option value="Cotada">Cotada</option>
-          </select>
-        </p>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <strong className="font-bold">Erro:</strong>
+            <span className="block">{error}</span>
+          </div>
+        )}
 
-        {/* Seção para exibir as cotações */}
-        <div className="mt-4">
-          <h3 className="text-xl font-semibold mb-2">Cotações</h3>
-          {displayedQuotations.length > 0 ? (
-            <ul className="divide-y divide-gray-200">
-              {displayedQuotations.map(quotation => (
-                <li key={quotation.id} className="py-2">
-                  <p><strong>Fornecedor:</strong> {quotation.supplierName || 'N/A'}</p>
-                  <p><strong>Preço:</strong> R$ {quotation.price !== undefined ? quotation.price : 'N/A'}</p>
-                  <p><strong>Observações:</strong> {quotation.observations || 'Nenhuma'}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600">Nenhuma cotação encontrada.</p>
-          )}
-        </div>
+        {quotationDetails ? (
+          <div>
+            <p><strong>ID da Requisição:</strong> {quotationDetails.requestId}</p>
+            <p><strong>Fornecedor:</strong> {quotationDetails.supplierName}</p>
+            <p><strong>Produto:</strong> {quotationDetails.productName}</p>
+            <p><strong>Preço:</strong> {quotationDetails.price}</p>
+            <p><strong>Observações:</strong> {quotationDetails.observations}</p>
+            <p><strong>Autor da Requisição:</strong> {quotationDetails.email}</p>
 
-        <div className="mt-4 flex justify-between">
-          <button
-            className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
-            onClick={onClose}
-          >
-            Fechar
-          </button>
-          <ExportCSV csvData={csvData} fileName="detalhes_requisicao.csv" />
-        </div>
+            <div className="mt-4">
+              <label className="block mb-2"><strong>Status:</strong></label>
+              <select 
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              >
+                <option value="Aberta">Aberta</option>
+                <option value="Em Cotação">Em Cotação</option>
+                <option value="Cotada">Cotada</option>
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <h3 className="text-md font-semibold">Cotações:</h3>
+              <ul>
+                {fictitiousQuotes.map(quote => (
+                  <li key={quote.id} className="border p-2 mt-2">
+                    <p><strong>Fornecedor:</strong> {quote.supplier}</p>
+                    <p><strong>Preço:</strong> {quote.price}</p>
+                    <p><strong>Observações:</strong> {quote.observations}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <p>Carregando detalhes...</p>
+        )}
+
+        <button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          onClick={onClose}
+        >
+          Fechar
+        </button>
       </div>
     </div>
   );

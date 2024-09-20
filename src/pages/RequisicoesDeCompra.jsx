@@ -24,6 +24,7 @@ const RequisicoesDeCompra = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [requestToDelete, setRequestToDelete] = useState(null);
   const [isCreateQuotationModalOpen, setIsCreateQuotationModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadRequests = async () => {
@@ -74,9 +75,11 @@ const RequisicoesDeCompra = () => {
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
+    setIsDetailsModalOpen(true);
   };
 
   const handleCloseDetails = () => {
+    setIsDetailsModalOpen(false);
     setSelectedRequest(null);
   };
 
@@ -219,33 +222,31 @@ const RequisicoesDeCompra = () => {
               </li>
             ))
           ) : (
-            <li className="py-4 text-center text-gray-500">Nenhuma requisição encontrada.</li>
+            <li className="py-4 px-6 text-center text-gray-500">Nenhuma requisição encontrada.</li>
           )}
         </ul>
       </div>
 
-      {selectedRequest && (
+      {isDetailsModalOpen && selectedRequest && (
         <QuotationDetailsModal
-          isOpen={!!selectedRequest}
-          request={selectedRequest}
+          isOpen={isDetailsModalOpen}
           onClose={handleCloseDetails}
+          requestId={selectedRequest.id}
         />
       )}
 
-      {isDialogOpen && (
-        <ConfirmationDialog
-          isOpen={isDialogOpen}
-          onConfirm={handleDeleteRequest}
-          onCancel={handleCloseConfirmationDialog}
-          message="Tem certeza de que deseja deletar esta requisição de compra?"
-        />
-      )}
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseConfirmationDialog}
+        onConfirm={handleDeleteRequest}
+        message="Você tem certeza que deseja deletar esta requisição de compra?"
+      />
 
       {isCreateQuotationModalOpen && (
         <CreateQuotationModal
           isOpen={isCreateQuotationModalOpen}
-          request={selectedRequest}
           onClose={handleCloseCreateQuotationModal}
+          request={selectedRequest}
         />
       )}
     </div>
